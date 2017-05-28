@@ -215,4 +215,4 @@ COPY tmux_collab.sh /usr/local/bin/
 EXPOSE 6006 8888
 
 WORKDIR "/root"
-CMD ["/bin/bash"]
+CMD ["/usr/local/bin/run_ssh.sh"]
