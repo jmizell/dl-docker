@@ -4,8 +4,17 @@ ARG TENSORFLOW_VERSION=0.8.0
 ARG TENSORFLOW_ARCH=gpu
 ARG KERAS_VERSION=1.0.3
 
-## Install dependencies
+# ensure local python is preferred over distribution python
+ENV PATH /usr/local/bin:$PATH
+
+# http://bugs.python.org/issue19846
+# > At the moment, setting "LANG=C" on a Linux system *fundamentally breaks Python 3*, and that's not OK.
+ENV LANG C.UTF-8
+
+# dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
+		tcl \
+		tk \
 		autoconf \
 		automake \
 		bzip2 \
@@ -82,19 +91,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		ca-certificates \
 		curl \
 		wget \
-	&& rm -rf /var/lib/apt/lists/*
-
-# ensure local python is preferred over distribution python
-ENV PATH /usr/local/bin:$PATH
-
-# http://bugs.python.org/issue19846
-# > At the moment, setting "LANG=C" on a Linux system *fundamentally breaks Python 3*, and that's not OK.
-ENV LANG C.UTF-8
-
-# runtime dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-		tcl \
-		tk \
 	&& rm -rf /var/lib/apt/lists/*
 
 ENV GPG_KEY C01E1CAD5EA2C4F0B8E3571504C367C218ADD4FF
@@ -192,7 +188,10 @@ RUN pip --no-cache-dir install \
 RUN pip --no-cache-dir install git+git://github.com/fchollet/keras.git@${KERAS_VERSION}
 
 # Setup sshd
-RUN echo 'root:screencast' | chpasswd && echo "export VISIBLE=now" >> /etc/profile && mkdir /var/run/sshd
+RUN echo 'root:screencast' | chpasswd && \
+    echo "export VISIBLE=now" >> /etc/profile && \
+    mkdir /var/run/sshd
+
 COPY etc/ /etc
 
 # Install Ngrok
@@ -206,9 +205,11 @@ COPY jupyter_notebook_config.py /root/.jupyter/
 # Jupyter has issues with being run directly: https://github.com/ipython/ipython/issues/7062
 COPY run_jupyter.sh /root/
 
-COPY run_ssh.sh /root/
-
+COPY run_ssh.sh /usr/local/bin/
+COPY .bashrc /root/
+COPY .bash_logout /root/
 COPY .vimrc /root/
+COPY tmux_collab.sh /usr/local/bin/
 
 # Expose Ports for TensorBoard (6006), Ipython (8888)
 EXPOSE 6006 8888
