@@ -1,9 +1,5 @@
 FROM nvidia/cuda:8.0-cudnn5-devel
 
-ARG TENSORFLOW_VERSION=0.8.0
-ARG TENSORFLOW_ARCH=gpu
-ARG KERAS_VERSION=1.0.3
-
 # ensure local python is preferred over distribution python
 ENV PATH /usr/local/bin:$PATH
 
@@ -179,6 +175,10 @@ RUN pip --no-cache-dir install --upgrade ipython && \
         sympy \
 		&& \
 	python -m ipykernel.kernelspec
+
+ARG TENSORFLOW_VERSION=0.8.0
+ARG TENSORFLOW_ARCH=gpu
+ARG KERAS_VERSION=2.0.4
 
 # Install TensorFlow
 RUN pip --no-cache-dir install \
