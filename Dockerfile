@@ -1,4 +1,4 @@
-FROM nvidia/cuda:8.0-cudnn5-devel
+FROM nvidia/cuda:8.0-cudnn5-devel-ubuntu14.04
 
 # ensure local python is preferred over distribution python
 ENV PATH /usr/local/bin:$PATH
@@ -164,25 +164,26 @@ RUN pip --no-cache-dir install --upgrade ipython && \
 		sphinx \
 		wheel \
 		zmq \
-		numpy\
-        matplotlib \
-        scikit-learn \
-        scipy \
-        nose \
-        h5py \
-        scikit-image \
-        pandas \
-        sympy \
+    ipykernel \
+    sklearn \
+    matplotlib \
+    scikit-learn \
+    scipy \
+    nose \
+    h5py \
+    scikit-image \
+    pandas \
+    sympy \
 		&& \
-	python -m ipykernel.kernelspec
+  python -m ipykernel.kernelspec
 
-ARG TENSORFLOW_VERSION=0.8.0
-ARG TENSORFLOW_ARCH=gpu
-ARG KERAS_VERSION=2.0.4
+ENV TENSORFLOW_VERSION 1.1.0
+ENV KERAS_VERSION 2.0.4
 
 # Install TensorFlow
 RUN pip --no-cache-dir install \
-	https://storage.googleapis.com/tensorflow/linux/${TENSORFLOW_ARCH}/tensorflow-${TENSORFLOW_VERSION}-cp27-none-linux_x86_64.whl
+	https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-${TENSORFLOW_VERSION}-cp27-none-linux_x86_64.whl
+ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 
 # Install Keras
 RUN pip --no-cache-dir install git+git://github.com/fchollet/keras.git@${KERAS_VERSION}
