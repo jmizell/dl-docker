@@ -73,12 +73,6 @@ else
   tmux -u set -g history-limit 100000
   tmux -u set -g prefix C-a
 
-  # mouse control
-  tmux -u set-window-option -g mode-mouse on
-  tmux -u set-option -g mouse-select-pane on
-  tmux -u set-option -g mouse-resize-pane on
-  tmux -u set-option -g mouse-select-window on
-
   # move between windows
   tmux -u bind-key C-p previous-window
   tmux -u bind-key C-n next-window
